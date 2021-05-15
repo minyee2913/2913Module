@@ -1,9 +1,12 @@
+import { bedrockServer } from "bdsx";
 import { events } from "bdsx/event";
 
 let system!:IVanillaServerSystem;
 events.serverOpen.on(()=>{
     system = server.registerSystem(0,0);
 });
+
+if (bedrockServer.isLaunched()) system = server.registerSystem(0,0);
 
 export function PlayerHasItem(entity:IEntity, itemId:string):number{
     let playerInventory = system.getComponent(entity, "minecraft:inventory_container")!;

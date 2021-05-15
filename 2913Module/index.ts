@@ -13,8 +13,9 @@ import { CommandOrigin } from 'bdsx/bds/commandorigin';
 import { events } from 'bdsx/event';
 import { green, red } from 'colors';
 import Event from 'krevent';
-import { playerPermission, getScore } from './customFunc';
-import { DataById, NameById, IdByName, XuidByName, playerList, form, Formsend, sendText, transferServer, setHealth, CustomScore, ScoreTYPE, Disconnect, netCmd, bossBar, InventoryTransaction, transaction} from './packets';
+import { existsSync, mkdirSync } from 'fs';
+import { playerPermission, getScore, StopRequested, PlayerHasItem, numberFormat, numberToKorean } from './customFunc';
+import { DataById, NameById, IdByName, XuidByName, playerList, form, Formsend, sendText, transferServer, setHealth, CustomScore, ScoreTYPE, Disconnect, netCmd, bossBar, InventoryTransaction, transaction, showProfile } from './packets';
 
 
 interface stateEvent {
@@ -28,6 +29,8 @@ class StateEvent implements stateEvent {
     ) {
     }
 }
+let folder = existsSync(`../scriptData`);
+if (folder === false) mkdirSync(`../scriptData`);
 
 const onServerState = new Event<(event: StateEvent) => void>();
 
@@ -52,7 +55,12 @@ export {
     InventoryTransaction,
     transaction,
     onServerState,
-    StateEvent
+    StateEvent,
+    StopRequested,
+    PlayerHasItem,
+    numberToKorean,
+    numberFormat,
+    showProfile
 }
 
 console.log(red('2913MODULE LOADED'));

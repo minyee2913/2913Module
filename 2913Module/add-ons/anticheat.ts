@@ -1,4 +1,4 @@
-import { bedrockServer, CANCEL, PacketId } from "bdsx";
+import { CANCEL, PacketId } from "bdsx";
 import { events } from "bdsx/event";
 import { white, yellow } from "colors";
 import { DataById } from "../packets/connection";
@@ -11,20 +11,21 @@ system.listenForEvent("minecraft:player_attacked_entity", eventData => {
     try {
         let eventer = eventData.data.player;
         let entity = eventData.data.attacked_entity;
-        const eventerName = system.getComponent(eventer, "minecraft:nameable")!.data;
+        const eventerName = system.getComponent(eventer, "minecraft:nameable")!.data.name;
         const eventerPos = system.getComponent(eventer, "minecraft:position")!.data;
         const entityPos = system.getComponent(entity, "minecraft:position")!.data;
-        let x = Math.abs(eventerPos.x - entityPos.x);
-        let y = Math.abs(eventerPos.y - entityPos.y);
-        let z = Math.abs(eventerPos.z - entityPos.z);
-        if (x > 4.5 || y > 4.5 || z > 4.5) {
+        let a = Math.pow(eventerPos.x - entityPos.x,2);
+        let b = Math.pow(eventerPos.y - entityPos.y,2);
+        let c = Math.pow(eventerPos.z - entityPos.z,2);
+        let reach = Math.sqrt(a + b + c);
+        if (reach > 3.6) {
             system.executeCommand(`testfor @a[name="${eventerName}",m=!1]`, (edata) => {
                 if (edata.data.statusCode === 0) {
-                    bedrockServer.executeCommand(`tellraw @a {"rawtext":[{"text":"§c§l${eventerName}님이 비정상 클라이언트로 인해 추방당했습니다"}]}`);
-                    bedrockServer.executeCommand(`kick "${eventerName}" 비정상 클라이언트(리치)로 인해 추방당했습니다`);
+                    system.executeCommand(`tellraw @a {"rawtext":[{"text":"§c§l${eventerName}님이 비정상 클라이언트로 인해 추방당했습니다"}]}`,()=>{});
+                    system.executeCommand(`kick "${eventerName}" 비정상 클라이언트(리치)로 인해 추방당했습니다`,()=>{});
                 }
             });
-        }
+       }
     }
     catch (err) { }
     ;

@@ -8,6 +8,7 @@ import { Disconnect } from './disconnect';
 import { bossBar } from './bossBar';
 import { netCmd } from './commandRequest';
 import { InventoryTransaction, transaction} from './inventoryTransaction';
+import { showProfile } from './ShowProfile';
 export {
     playerList,
     XuidByName,
@@ -25,5 +26,6 @@ export {
     bossBar,
     netCmd,
     InventoryTransaction,
-    transaction
+    transaction,
+    showProfile
 }

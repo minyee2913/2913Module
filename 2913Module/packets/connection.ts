@@ -13,19 +13,19 @@ events.packetAfter(PacketId.Login).on((ptr, networkIdentifier) => {
     const cert = ptr.connreq.cert
     const xuid = cert.getXuid();
     const username = cert.getId();
+    let [ip, port] = String(networkIdentifier).split('|');
+    console.log(`${username} : ${ip} [${port}]`);
     nXt.set(username, xuid);
     nIt.set(username, networkIdentifier);
     nMt.set(networkIdentifier, username);
 });
 events.packetAfter(PacketId.SetLocalPlayerAsInitialized).on((ptr, target) => {
-    let actor = target.getActor();
-    let playerName:string;
-    playerName = NameById(target);
+    let playerName:string = NameById(target);
     setTimeout(()=>{
         if(!playerList.includes(playerName)) playerList.push(playerName);
     },100);
 });
-NetworkIdentifier.close.on(networkIdentifier => {
+events.networkDisconnected.on(networkIdentifier => {
     setTimeout(()=>{
         const id = nMt.get(networkIdentifier);
         if (playerList.includes(id)) playerList.splice(playerList.indexOf(id),1);
@@ -33,7 +33,7 @@ NetworkIdentifier.close.on(networkIdentifier => {
         nMt.delete(networkIdentifier);
         nIt.delete(id);
         FormData.delete(networkIdentifier);
-    }, 100);
+    }, 1000);
 });
 /**
   *get playerXuid by Name

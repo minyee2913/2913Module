@@ -3,7 +3,7 @@ import { ActorWildcardCommandSelector, CommandPermissionLevel } from 'bdsx/bds/c
 import { events } from 'bdsx/event';
 import { CxxString } from 'bdsx/nativetype';
 import { green, white, yellow } from 'colors';
-import { open, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, open, readFileSync, writeFileSync } from 'fs';
 import { IdByName, Disconnect, NameById, playerPermission, playerList } from '..';
 import { sendText } from '../packets';
 ipfilter.setTrafficLimit(1000000);
@@ -12,7 +12,7 @@ ipfilter.setTrafficLimitPeriod(10*60);
 
 let config =
 {
-    LocalData: './ban.json',
+    LocalData: '../scriptData/ban.json',
     Ban_command: 'ban_',
     IpBan_command: 'ipban_',
     UnBan_command: 'unban_',
