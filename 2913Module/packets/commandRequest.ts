@@ -1,9 +1,12 @@
-import { Actor, CANCEL, NetworkIdentifier, PacketId } from "bdsx";
+import { Actor } from "bdsx/bds/actor";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import Event from "krevent";
 import { DataById } from "./connection";
 
-events.packetBefore(PacketId.CommandRequest).on((pkt, target)=>{
+events.packetBefore(MinecraftPacketIds.CommandRequest).on((pkt, target)=>{
     let data = DataById(target);
     let ev = {
         command: pkt.command,

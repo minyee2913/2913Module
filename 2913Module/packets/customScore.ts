@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { RemoveObjectivePacket, ScorePacketInfo, SetDisplayObjectivePacket, SetScorePacket } from "bdsx/bds/packets";
 
 export enum ScoreTYPE {
@@ -43,7 +43,28 @@ export namespace CustomScore {
 		const packet = SetScorePacket.create();
 		packet.type = SetScorePacket.Type.CHANGE;
 		packet.entries.push(entry);
-		packet.sendTo(actor.networkIdentifier);
+		packet.sendTo(player);
+		packet.dispose();
+	}
+	export function SetPlayerValue(player: NetworkIdentifier, targetPlayer: NetworkIdentifier, score: number, objective: "2913:sidebar" | "2913:list") {
+		let actor = player.getActor();
+		if (actor === null) throw '[SetPlayerValue] actor is Null';
+		let Tactor = targetPlayer.getActor();
+		if (Tactor === null) throw '[SetPlayerValue] Target actor is Null';
+		let Id = Math.random()*1000000 + 1000000;
+		const entry = new ScorePacketInfo(true);
+		entry.construct();
+		entry.scoreboardId.idAsNumber = Id;
+		entry.objectiveName = objective;
+		entry.type = ScorePacketInfo.Type.PLAYER;
+		entry.score = score;
+		entry.playerEntityUniqueId = Tactor.getUniqueIdPointer().getBin64();
+		if (objective === "2913:sidebar") SideEntries.set(Id, entry);
+		if (objective === "2913:list") ListEntries.set(Id, entry);
+		const packet = SetScorePacket.create();
+		packet.type = SetScorePacket.Type.CHANGE;
+		packet.entries.push(entry);
+		packet.sendTo(player);
 		packet.dispose();
 	}
 	export function RemoveSidebarValue(player: NetworkIdentifier, Id: number, objective: "2913:sidebar" | "2913:list") {

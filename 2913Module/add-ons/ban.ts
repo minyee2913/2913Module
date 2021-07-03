@@ -1,6 +1,11 @@
-import { ipfilter, command, netevent, MinecraftPacketIds, nethook, bedrockServer, Actor } from 'bdsx';
+import { Actor } from 'bdsx/bds/actor';
 import { ActorWildcardCommandSelector, CommandPermissionLevel } from 'bdsx/bds/command';
+import { MinecraftPacketIds } from 'bdsx/bds/packetids';
+import { command } from 'bdsx/command';
+import { CANCEL } from 'bdsx/common';
+import { ipfilter } from 'bdsx/core';
 import { events } from 'bdsx/event';
+import { bedrockServer } from 'bdsx/launcher';
 import { CxxString } from 'bdsx/nativetype';
 import { green, white, yellow } from 'colors';
 import { existsSync, mkdirSync, open, readFileSync, writeFileSync } from 'fs';
@@ -34,27 +39,15 @@ try {
 });
 
 command.register(config.Ban_command, "ban Command", CommandPermissionLevel.Operator).overload((p, o, ut)=>{
-    let targets:Actor[] = [];
-    for (const actor of p.player.newResults(o)) {
-        if (!actor.isPlayer()) {
-            sendText(o.getName(), '§c§lOnly Player!!!');
-            return;
-        }
-        targets.push(actor);
-    }
-    if (targets.length > 1) {
-        sendText(o.getName(), '§c§lOnly 1 Player!!!');
-        return;
-    }
-    let target = targets[0].getNetworkIdentifier();
-    let targetName = NameById(target);
+    let target = IdByName(p.player);
+    let targetName = p.player
     console.log(`${targetName} banned`);
     bedrockServer.executeCommand(`tellraw @a {"rawtext":[{"text":"${config.announce.replace('${target}', `${targetName}`).replace('${origin}', `${o.getName()}`)}"}]}`);
     const BanJS = JSON.parse(readFileSync(config.LocalData, "utf8"));
     BanJS.NameBan.push(targetName);
     writeFileSync(config.LocalData, JSON.stringify(BanJS, null, 4), "utf8");
-    if (playerList.includes(o.getName())) Disconnect(target, config.Ban_msg);
-},{ player: ActorWildcardCommandSelector});
+    if (playerList.includes(targetName)) Disconnect(target, config.Ban_msg);
+},{ player: CxxString});
 command.register(config.IpBan_command, "Ipban Command", CommandPermissionLevel.Operator).overload((p, o, ut)=>{
     let targets:Actor[] = [];
     for (const actor of p.player.newResults(o)) {
@@ -102,10 +95,16 @@ events.packetAfter(MinecraftPacketIds.Login).on((ptr, networkidentifier, packetI
     let [ip, port] = target.split('|');
     const BanJS = JSON.parse(readFileSync(config.LocalData, "utf8"));
     let Ijs = BanJS.IpBan.map((e:any, i:any) => e.ip);
-    setTimeout(function(){
-        if (BanJS.NameBan.includes(targetName)) Disconnect(networkidentifier, config.Ban_msg);
-        if (Ijs.includes(ip)) Disconnect(networkidentifier, config.IpBan_msg);
-    }, 3000)
+    if (BanJS.NameBan.includes(targetName)) {
+        setTimeout(()=>{
+            Disconnect(networkidentifier, config.IpBan_msg);
+        }, 5000);
+        return;
+    }
+    if (Ijs.includes(ip)) setTimeout(()=>{
+        Disconnect(networkidentifier, config.IpBan_msg);
+    }, 5000);
+    return CANCEL;
 })
 
 

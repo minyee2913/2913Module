@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { SetHealthPacket } from "bdsx/bds/packets";
 
 export function setHealth(networkIdentifier: NetworkIdentifier, value: number) {

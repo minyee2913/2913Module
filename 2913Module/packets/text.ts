@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { TextPacket } from "bdsx/bds/packets";
 import { IdByName } from "./connection";
 
@@ -21,7 +21,8 @@ export function sendText(target: NetworkIdentifier|string, text: string, type?: 
     let networkIdentifier:NetworkIdentifier;
     if (target instanceof NetworkIdentifier) networkIdentifier = target;
     else {
-        networkIdentifier = IdByName(target);
+        let id = IdByName(target);
+        if (id instanceof NetworkIdentifier) networkIdentifier = id;
     }
     if ( type === undefined || typeof type !== "number") type = 0;
     const Packet = TextPacket.create();

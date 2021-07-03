@@ -3,6 +3,11 @@ export function numberFormat(x:any) {
 }
 
 export function numberToKorean(number:number){
+    let e = '';
+    if (number < 0) {
+        number = Math.abs(number);
+        e = '-'
+    }
     var inputNumber:any  = number < 0 ? false : number;
     var unitWords    = ['', '만', '억', '조', '경'];
     var splitUnit    = 10000;
@@ -24,5 +29,5 @@ export function numberToKorean(number:number){
     }
     if (number === 0) resultString = "0"
 
-    return resultString;
+    return e + resultString;
 }

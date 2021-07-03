@@ -1,5 +1,7 @@
-import { Actor, bedrockServer } from "bdsx";
+import { Actor } from "bdsx/bds/actor";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { events } from "bdsx/event";
+import { bedrockServer } from "bdsx/launcher";
 import { IdByName, playerList, sendText } from "../packets";
 import { StopRequested } from "./stopRequest";
 let system!:IVanillaServerSystem;
@@ -11,6 +13,7 @@ if (bedrockServer.isLaunched()) system = server.registerSystem(0,0);
 let i = setInterval(function run(){
     playerList.forEach((n)=>{
         let target = IdByName(n);
+        if (!(target instanceof NetworkIdentifier)) return;
         let actor = target.getActor()!;
         if (!(actor instanceof Actor)) return;
         let Entity = actor.getEntity();
@@ -27,7 +30,7 @@ let i = setInterval(function run(){
         sendText(target, f.replace("tips_:", "").replace(/-s/gi, " "), 5);
         (tags as any) = null;
     });
-},100);
+},2000);
 
 StopRequested.on(()=>{
     clearInterval(i);

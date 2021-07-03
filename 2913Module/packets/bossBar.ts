@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { BossEventPacket } from "bdsx/bds/packets";
 
 export namespace bossBar {

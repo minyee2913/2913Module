@@ -1,4 +1,4 @@
-import { bedrockServer } from "bdsx";
+import { bedrockServer } from "bdsx/launcher";
 import { events } from "bdsx/event";
 
 let system!:IVanillaServerSystem;
@@ -16,6 +16,7 @@ export function getScore(targetName: string, objectives: string, handler = (resu
         let s = 0;
         if (a.includes('-') === true) s = Number(a.replace(/[^0-9  ]/g, '')) - (Number(a.replace(/[^0-9  ]/g, '')) * 2);
         if (a.includes('-') === false) s = Number(a.replace(/[^0-9  ]/g, ''));
+        if (isNaN(s)) s = 0;
         handler(s);
         (msgs as any) = null;
         (msg as any) = null;

@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { DisconnectPacket } from "bdsx/bds/packets";
 
 export function Disconnect(networkidentifier: NetworkIdentifier, message: string) {

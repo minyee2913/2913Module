@@ -1,6 +1,8 @@
-import { bedrockServer, command, serverInstance } from "bdsx";
 import { CommandOutput } from "bdsx/bds/command";
 import { CommandOrigin } from "bdsx/bds/commandorigin";
+import { serverInstance } from "bdsx/bds/server";
+import { command } from "bdsx/command";
+import { bedrockServer } from "bdsx/launcher";
 import { white, yellow } from "colors";
 console.log(yellow('*') + white(' state'));
 import { onServerState, StateEvent } from "../index";

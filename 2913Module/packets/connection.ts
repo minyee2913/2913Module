@@ -1,16 +1,20 @@
-import { NetworkIdentifier, PacketId } from "bdsx";
+import { DeviceOS } from "bdsx/common";
 import { events } from "bdsx/event";
+import { MinecraftPacketIds } from "bdsx/bds/packetIds";
 import { FormData } from "./form";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 
 export let playerList:string[] = [];
 let nIt = new Map();
 let nMt = new Map();
 let nXt = new Map();
-events.packetAfter(PacketId.Login).on((ptr, networkIdentifier) => {
+let nSt = new Map();
+events.packetAfter(MinecraftPacketIds.Login).on((ptr, networkIdentifier) => {
     if (!(typeof ptr.connreq == "object")) {
         return;
     }
     const cert = ptr.connreq.cert
+    const device = DeviceOS[ptr.connreq.getDeviceOS()];
     const xuid = cert.getXuid();
     const username = cert.getId();
     let [ip, port] = String(networkIdentifier).split('|');
@@ -18,8 +22,9 @@ events.packetAfter(PacketId.Login).on((ptr, networkIdentifier) => {
     nXt.set(username, xuid);
     nIt.set(username, networkIdentifier);
     nMt.set(networkIdentifier, username);
+    nSt.set(networkIdentifier, device);
 });
-events.packetAfter(PacketId.SetLocalPlayerAsInitialized).on((ptr, target) => {
+events.packetAfter(MinecraftPacketIds.SetLocalPlayerAsInitialized).on((ptr, target) => {
     let playerName:string = NameById(target);
     setTimeout(()=>{
         if(!playerList.includes(playerName)) playerList.push(playerName);
@@ -31,15 +36,25 @@ events.networkDisconnected.on(networkIdentifier => {
         if (playerList.includes(id)) playerList.splice(playerList.indexOf(id),1);
         nXt.delete(id);
         nMt.delete(networkIdentifier);
+        nSt.delete(networkIdentifier);
         nIt.delete(id);
         FormData.delete(networkIdentifier);
     }, 1000);
 });
 /**
-  *get playerXuid by Name
+  *get player DeviceOS by Id
 */
 export function XuidByName(PlayerName: string) {
-    let Rlt:any = nXt.get(PlayerName);
+    let Rlt = nXt.get(PlayerName);
+    if (Rlt === undefined) Rlt = '';
+    return Rlt;
+}
+/**
+  *get playerXuid by Name
+*/
+export function DeviceById(networkIdentifier: NetworkIdentifier):string{
+    let Rlt:any = nSt.get(networkIdentifier);
+    if (Rlt === undefined) Rlt = '';
     return Rlt;
 }
 /**

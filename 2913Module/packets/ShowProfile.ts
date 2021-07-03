@@ -1,4 +1,4 @@
-import { NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { ShowProfilePacket } from "bdsx/bds/packets";
 
 export function showProfile(target:NetworkIdentifier, xuid:string){

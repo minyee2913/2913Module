@@ -1,4 +1,4 @@
-import { playerList, XuidByName, DataById, NameById, IdByName} from './connection';
+import { playerList, XuidByName, DataById, NameById, IdByName, DeviceById} from './connection';
 import { form, Formsend } from './form';
 import { sendText } from './text';
 import { transferServer } from './transferServer';
@@ -27,5 +27,6 @@ export {
     netCmd,
     InventoryTransaction,
     transaction,
-    showProfile
+    showProfile,
+    DeviceById
 }

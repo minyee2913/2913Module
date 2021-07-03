@@ -1,39 +1,43 @@
-import { CANCEL, PacketId } from "bdsx";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
+import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { white, yellow } from "colors";
-import { DataById } from "../packets/connection";
+import { DataById, IdByName, NameById, playerList } from "../packets/connection";
 import { Disconnect } from "../packets/disconnect";
 import { InventoryTransaction, transaction } from "../packets/inventoryTransaction";
 
 const system = server.registerSystem(0, 0);
 
-system.listenForEvent("minecraft:player_attacked_entity", eventData => {
-    try {
-        let eventer = eventData.data.player;
-        let entity = eventData.data.attacked_entity;
-        const eventerName = system.getComponent(eventer, "minecraft:nameable")!.data.name;
-        const eventerPos = system.getComponent(eventer, "minecraft:position")!.data;
-        const entityPos = system.getComponent(entity, "minecraft:position")!.data;
-        let a = Math.pow(eventerPos.x - entityPos.x,2);
-        let b = Math.pow(eventerPos.y - entityPos.y,2);
-        let c = Math.pow(eventerPos.z - entityPos.z,2);
-        let reach = Math.sqrt(a + b + c);
-        if (reach > 3.6) {
-            system.executeCommand(`testfor @a[name="${eventerName}",m=!1]`, (edata) => {
-                if (edata.data.statusCode === 0) {
-                    system.executeCommand(`tellraw @a {"rawtext":[{"text":"§c§l${eventerName}님이 비정상 클라이언트로 인해 추방당했습니다"}]}`,()=>{});
-                    system.executeCommand(`kick "${eventerName}" 비정상 클라이언트(리치)로 인해 추방당했습니다`,()=>{});
-                }
-            });
-       }
-    }
-    catch (err) { }
-    ;
-});
+// system.listenForEvent("minecraft:player_attacked_entity", eventData => {
+//     try {
+//         let eventer = eventData.data.player;
+//         let entity = eventData.data.attacked_entity;
+//         if (system.hasComponent(entity, "minecraft:teleport")) return;
+//         const eventerName = system.getComponent(eventer, "minecraft:nameable")!.data.name;
+//         const eventerPos = system.getComponent(eventer, "minecraft:position")!.data;
+//         const entityPos = system.getComponent(entity, "minecraft:position")!.data;
+//         let a = Math.pow(eventerPos.x - entityPos.x,2);
+//         let b = Math.pow(eventerPos.y - entityPos.y,2);
+//         let c = Math.pow(eventerPos.z - entityPos.z,2);
+//         let reach = Math.sqrt(a + b + c);
+//         if (reach > 6) {
+//             system.executeCommand(`testfor @a[name="${eventerName}",m=!1]`, (edata) => {
+//                 if (edata.data.statusCode === 0) {
+//                     system.executeCommand(`tellraw @a {"rawtext":[{"text":"§c§l${eventerName}님이 비정상 클라이언트로 인해 추방당했습니다"}]}`,()=>{});
+//                     system.executeCommand(`kick "${eventerName}" 비정상 클라이언트(리치)로 인해 추방당했습니다`,()=>{});
+//                 }
+//             });
+//        }
+//     }
+//     catch (err) { }
+//     ;
+// });
+
+
 const Nametest = new Map();
-events.packetAfter(PacketId.SetLocalPlayerAsInitialized).on((pkt, target) => {
+events.packetAfter(MinecraftPacketIds.SetLocalPlayerAsInitialized).on((pkt, target) => {
     try {
-        let name = DataById(target)[0];
+        let name = NameById(target);
         Nametest.set(target, name);
         return;
     }

@@ -14,11 +14,13 @@ import { PlayerHasItem } from './PlayerHasItem';
 import { numberFormat, numberToKorean } from './numberFormat';
 import { StopRequested } from './stopRequest';
 import './Tip';
+import { onUseItem } from './onUse';
 export {
     playerPermission,
     getScore,
     PlayerHasItem,
     numberFormat,
     numberToKorean,
-    StopRequested
+    StopRequested,
+    onUseItem
 }

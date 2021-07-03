@@ -8,14 +8,15 @@
 // |_____|        |_____|   |__|    |___|  \_______|       |____|       |__________|    |__________|     |___________|           |__|   |_________| |__________|
 //
 //
-import { bedrockServer } from 'bdsx';
 import { CommandOrigin } from 'bdsx/bds/commandorigin';
 import { events } from 'bdsx/event';
 import { green, red } from 'colors';
 import Event from 'krevent';
+import './hooking';
 import { existsSync, mkdirSync } from 'fs';
-import { playerPermission, getScore, StopRequested, PlayerHasItem, numberFormat, numberToKorean } from './customFunc';
-import { DataById, NameById, IdByName, XuidByName, playerList, form, Formsend, sendText, transferServer, setHealth, CustomScore, ScoreTYPE, Disconnect, netCmd, bossBar, InventoryTransaction, transaction, showProfile } from './packets';
+import { playerPermission, getScore, StopRequested, PlayerHasItem, numberFormat, numberToKorean, onUseItem } from './customFunc';
+import { DataById, NameById, IdByName, XuidByName, playerList, form, Formsend, sendText, transferServer, setHealth, CustomScore, ScoreTYPE, Disconnect, netCmd, bossBar, InventoryTransaction, transaction, showProfile, DeviceById } from './packets';
+import { bedrockServer } from 'bdsx/launcher';
 
 
 interface stateEvent {
@@ -60,7 +61,9 @@ export {
     PlayerHasItem,
     numberToKorean,
     numberFormat,
-    showProfile
+    showProfile,
+    DeviceById,
+    onUseItem
 }
 
 console.log(red('2913MODULE LOADED'));

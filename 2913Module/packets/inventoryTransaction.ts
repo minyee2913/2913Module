@@ -1,4 +1,6 @@
-import { CANCEL, MinecraftPacketIds, NetworkIdentifier } from "bdsx";
+import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
+import { MinecraftPacketIds } from "bdsx";
+import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import Event from "krevent";
 
