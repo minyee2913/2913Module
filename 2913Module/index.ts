@@ -11,10 +11,10 @@
 import { CommandOrigin } from 'bdsx/bds/commandorigin';
 import { events } from 'bdsx/event';
 import { green, red } from 'colors';
-import Event from 'krevent';
+import { Event } from "bdsx/eventtarget";
 import './hooking';
 import { existsSync, mkdirSync } from 'fs';
-import { playerPermission, getScore, StopRequested, PlayerHasItem, numberFormat, numberToKorean, onUseItem } from './customFunc';
+import { playerPermission, getScore, StopRequested, PlayerHasItem, numberFormat, numberToKorean, onUseItem, getScoreSync } from './customFunc';
 import { DataById, NameById, IdByName, XuidByName, playerList, form, Formsend, sendText, transferServer, setHealth, CustomScore, ScoreTYPE, Disconnect, netCmd, bossBar, InventoryTransaction, transaction, showProfile, DeviceById } from './packets';
 import { bedrockServer } from 'bdsx/launcher';
 
@@ -63,7 +63,8 @@ export {
     numberFormat,
     showProfile,
     DeviceById,
-    onUseItem
+    onUseItem,
+    getScoreSync
 }
 
 console.log(red('2913MODULE LOADED'));

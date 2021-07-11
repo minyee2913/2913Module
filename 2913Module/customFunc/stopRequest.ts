@@ -1,5 +1,5 @@
 import { events } from "bdsx/event";
-import Event from "krevent";
+import { Event } from "bdsx/eventtarget";
 let fired = false;
 events.serverLog.on((log)=>{
     if (log === "[INFO] Server stop requested.") {

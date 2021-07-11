@@ -9,7 +9,7 @@
 //
 //
 import { playerPermission } from './playerPermission';
-import { getScore } from './getScore';
+import { getScore, getScoreSync } from './getScore';
 import { PlayerHasItem } from './PlayerHasItem';
 import { numberFormat, numberToKorean } from './numberFormat';
 import { StopRequested } from './stopRequest';
@@ -22,5 +22,6 @@ export {
     numberFormat,
     numberToKorean,
     StopRequested,
-    onUseItem
+    onUseItem,
+    getScoreSync
 }

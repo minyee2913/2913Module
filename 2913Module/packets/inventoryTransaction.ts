@@ -1,8 +1,8 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { MinecraftPacketIds } from "bdsx";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
-import Event from "krevent";
+import { Event } from "bdsx/eventtarget";
 
 
 export enum transaction{

@@ -10,11 +10,10 @@ let nMt = new Map();
 let nXt = new Map();
 let nSt = new Map();
 events.packetAfter(MinecraftPacketIds.Login).on((ptr, networkIdentifier) => {
-    if (!(typeof ptr.connreq == "object")) {
-        return;
-    }
-    const cert = ptr.connreq.cert
-    const device = DeviceOS[ptr.connreq.getDeviceOS()];
+    let conq = ptr.connreq;
+    if (conq === null) return;
+    const cert = conq.cert;
+    const device = DeviceOS[conq.getDeviceOS()];
     const xuid = cert.getXuid();
     const username = cert.getId();
     let [ip, port] = String(networkIdentifier).split('|');

@@ -12,7 +12,9 @@ const symbols = [
     'SignBlockActor::save',
     'ListTag::getInt',
     'ProjectileComponent::hurt',
-    'ActorDamageByActorSource::getDamagingEntityUniqueID'
+    'ActorDamageByActorSource::getDamagingEntityUniqueID',
+    'EnchantUtils::getEnchantLevel',
+    'EnchantUtils::hasEnchant'
 
 ] as const
 
@@ -53,6 +55,7 @@ const symbols2 = [
     '?putShort@CompoundTag@@QEAAAEAFV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@F@Z',
     '?putString@CompoundTag@@QEAAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V23@0@Z',
     '?remove@CompoundTag@@QEAA_NV?$basic_string_span@$$CBD$0?0@gsl@@@Z',
+    '?applyEnchant@EnchantUtils@@SA_NAEAVItemStackBase@@W4Type@Enchant@@H_N@Z',
     '??0ListTag@@QEAA@XZ',
     '??1ListTag@@UEAA@XZ',
     '?add@ListTag@@QEAAXV?$unique_ptr@VTag@@U?$default_delete@VTag@@@std@@@std@@@Z',

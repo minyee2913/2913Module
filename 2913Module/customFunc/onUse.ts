@@ -3,7 +3,7 @@ import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { bedrockServer } from "bdsx/launcher";
-import Event from "krevent";
+import { Event } from "bdsx/eventtarget";
 import { InventoryTransaction, transaction } from "../packets";
 let system!:IVanillaServerSystem;
 events.serverOpen.on(()=>{

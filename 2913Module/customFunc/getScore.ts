@@ -1,11 +1,16 @@
 import { bedrockServer } from "bdsx/launcher";
 import { events } from "bdsx/event";
+import { serverInstance } from "bdsx/bds/server";
+import { Level } from "bdsx/bds/level";
+import { Actor } from "bdsx/bds/actor";
+import { ScoreboardId, ScoreInfo } from "../../../bdsx/bds/scoreboard";
 
 let system!:IVanillaServerSystem;
 events.serverOpen.on(()=>{
     system = server.registerSystem(0,0);
 });
 if (bedrockServer.isLaunched()) system = server.registerSystem(0,0);
+
 
 export function getScore(targetName: string, objectives: string, handler = (result: any) => {}) {
     system.executeCommand(`scoreboard players add @a[name="${targetName}",c=1] ${objectives} 0`, result => {
@@ -25,3 +30,17 @@ export function getScore(targetName: string, objectives: string, handler = (resu
     });
     return;
 };
+
+export function getScoreSync(target: Actor|string, objectives: string):null|number{
+    let level = serverInstance.minecraft.getLevel();
+    if (!(level instanceof Level)) return null;
+    let score = level.getScoreboard();
+    let obj = score.getObjective(objectives)!;
+    if (obj === null) return null;
+    let id!:ScoreboardId;
+    if (target instanceof Actor) {
+        if (target.isPlayer()) id = score.getPlayerScoreboardId(target);
+        else id = score.getActorScoreboardId(target);
+    } else id = score.getFakePlayerScoreboardId(target);
+    return obj.getPlayerScore(id).value;
+}
