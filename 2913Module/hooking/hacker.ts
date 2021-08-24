@@ -11,10 +11,12 @@ const symbols = [
     'BlockActor::save',
     'SignBlockActor::save',
     'ListTag::getInt',
-    'ProjectileComponent::hurt',
     'ActorDamageByActorSource::getDamagingEntityUniqueID',
     'EnchantUtils::getEnchantLevel',
-    'EnchantUtils::hasEnchant'
+    'EnchantUtils::hasEnchant',
+    'ItemEnchants::_toList',
+    'ItemEnchants::getEnchantNames',
+    'ItemStackBase::constructItemEnchantsFromUserData',
 
 ] as const
 
@@ -69,7 +71,10 @@ const symbols2 = [
     '?getFloat@ListTag@@QEBAMH@Z',
     '?getInt@ListTag@@QEBAHH@Z',
     '?getString@ListTag@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z',
-    '?shoot@ProjectileComponent@@QEAAXAEAVActor@@0@Z'
+    '?save@ItemStackBase@@QEBA?AV?$unique_ptr@VCompoundTag@@U?$default_delete@VCompoundTag@@@std@@@std@@XZ',
+    '?constructItemEnchantsFromUserData@ItemStackBase@@QEBA?AVItemEnchants@@XZ',
+    '?canEnchant@EnchantUtils@@SA?AUEnchantResult@@AEBVItemStackBase@@W4Type@Enchant@@H_N@Z',
+    '?clone@ItemStack@@QEBA?AV1@XZ'
 
 ] as const
 

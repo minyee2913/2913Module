@@ -2,6 +2,7 @@ import { BlockPos, RelativeFloat } from "bdsx/bds/blockpos";
 import { command } from "bdsx/command";
 import { abstract } from "bdsx/common";
 import { bool_t, CxxString, int32_t, NativeType, void_t } from "bdsx/nativetype";
+import { CommandPermissionLevel } from "../../../bdsx/bds/command";
 import { BlockActor, Blocksource } from "./blocks";
 import { hacker } from "./hacker";
 import { compoundTag } from "./nbt";
@@ -18,7 +19,7 @@ class SignBlockActor extends BlockActor {
     }
 }
 
-command.register('changesign', '표지판 글자를 바꿉니다').overload(({x, y, z, message, IgnoreLighting},o)=>{
+command.register('changesign', '표지판 글자를 바꿉니다', CommandPermissionLevel.Operator).overload(({x, y, z, message, IgnoreLighting},o)=>{
     let actor = o.getEntity()!;
     if (actor === null) return;
     const originPos = o.getBlockPosition();

@@ -2,15 +2,18 @@ import { Register } from "bdsx/assembler";
 import { abstract } from "bdsx/common";
 import { AllocatedPointer, chakraUtil, VoidPointer } from "bdsx/core";
 import { makefunc } from "bdsx/makefunc";
-import { makefuncDefines } from "bdsx/makefunc_defines";
 import { NativeClass, nativeClass } from "bdsx/nativeclass";
 import { bool_t, CxxString, float32_t, int16_t, int32_t, int64_as_float_t, int8_t, NativeType, uint64_as_float_t, uint8_t, void_t } from "bdsx/nativetype";
+import { proc, proc2 } from "bdsx/bds/symbols";
 import { hacker } from "./hacker";
 
+const string_ctor = makefunc.js(proc2['??0?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@QEAA@XZ'], void_t, null, VoidPointer);
+const string_dtor = makefunc.js(proc['std::basic_string<char,std::char_traits<char>,std::allocator<char> >::_Tidy_deallocate'], void_t, null, VoidPointer);
 export const basic_string_span = new NativeType<string>(
     'basic_string_span<char_const_,-1>',
     0x10, 8,
     v=>typeof v === 'string',
+    undefined,
     (ptr, offset)=>{
         const newptr = ptr.add(offset);
         const length = newptr.getInt64AsFloat();
@@ -23,26 +26,20 @@ export const basic_string_span = new NativeType<string>(
         strObj.setString(v);
         newptr.setPointer(strObj, 8);
     },
-    (asm, target, source, info)=>{
-        asm.qmov_t_t(makefunc.Target[0], source);
-        asm.lea_r_rp(Register.r9, Register.rbp, 1, info.offsetForLocalSpace!+0x10);
-        asm.mov_r_c(Register.r8, chakraUtil.stack_utf8);
-        asm.mov_r_c(Register.rdx, info.numberOnUsing);
-        asm.call_rp(Register.rdi, 1, makefuncDefines.fn_str_js2np);
-
-        asm.mov_r_rp(Register.rcx, Register.rbp, 1, info.offsetForLocalSpace!+0x10);
-        asm.mov_rp_r(Register.rbp, 1, info.offsetForLocalSpace!+0x08, Register.rax);
-        asm.mov_rp_r(Register.rbp, 1, info.offsetForLocalSpace!, Register.rcx);
-        asm.lea_t_rp(target, Register.rbp, 1, info.offsetForLocalSpace!);
+    (stackptr, offset)=>{
+        const ptr = stackptr.getPointer(offset);
+        return ptr.getCxxString();
     },
-    (asm, target, source, info)=>{
-        throw new Error("np2js for gsl::basic_string_span is not supported");
-        // TODO: implement np2js
-        // currently no functions are in use that return basic_string_span so it is unnecessary
+    (stackptr, param, offset)=>{
     },
-    (asm, target, source)=>asm.qmov_t_t(target, source)
-);
-basic_string_span[makefunc.pointerReturn] = true;
+    string_ctor,
+    string_dtor,
+    (to, from)=>{
+        to.setCxxString(from.getCxxString());
+    }, (to, from)=>{
+        to.copyFrom(from, 0x20);
+        string_ctor(from);
+    });
 Object.freeze(basic_string_span);
 export type basic_string_span = string;
 
@@ -242,18 +239,18 @@ compoundTag.prototype.putShort = hacker.js("?putShort@CompoundTag@@QEAAAEAFV?$ba
 compoundTag.prototype.putString = hacker.js("?putString@CompoundTag@@QEAAAEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V23@0@Z", CxxString, {this:compoundTag}, CxxString, CxxString);
 compoundTag.prototype.remove = hacker.js("?remove@CompoundTag@@QEAA_NV?$basic_string_span@$$CBD$0?0@gsl@@@Z", bool_t, {this:compoundTag}, basic_string_span);
 
-// ListTag.prototype[NativeType.ctor] = hacker.js("??0ListTag@@QEAA@XZ", void_t, {this:ListTag});
+ListTag.prototype[NativeType.ctor] = hacker.js("??0ListTag@@QEAA@XZ", void_t, {this:ListTag});
 // ListTag.prototype[NativeType.dtor] = hacker.js("??1ListTag@@UEAA@XZ", void_t, {this:ListTag}); // TODO: test destructor as compoundTag's destructor does not work
-// ListTag.prototype.getCompound = hacker.js("?getCompound@ListTag@@QEBAPEBVCompoundTag@@_K@Z", compoundTag, {this:ListTag}, uint64_as_float_t);
-// ListTag.prototype.size = hacker.js("?size@ListTag@@QEBAHXZ", int32_t, {this:ListTag});
-// // ListTag.prototype.append = hacker.js("?add@ListTag@@QEAAXV?$unique_ptr@VTag@@U?$default_delete@VTag@@@std@@@std@@@Z", void_t, {this:ListTag}, Tag);
-// // ListTag.prototype.copy = hacker.js("?copy@ListTag@@UEBA?AV?$unique_ptr@VTag@@U?$default_delete@VTag@@@std@@@std@@XZ", Tag, {this:ListTag});
-// // ListTag.prototype.copyList = hacker.js("?copyList@ListTag@@QEBA?AV?$unique_ptr@VListTag@@U?$default_delete@VListTag@@@std@@@std@@XZ", ListTag, {this:ListTag});
-// // ListTag.prototype.deleteChildren = hacker.js("?deleteChildren@ListTag@@UEAAXXZ", void_t, {this:ListTag});
-// // ListTag.prototype.equals = hacker.js("?equals@ListTag@@UEBA_NAEBVTag@@@Z", bool_t, {this:ListTag}, Tag);
-// ListTag.prototype.get = hacker.js("?get@ListTag@@QEBAPEAVTag@@H@Z", Tag, {this:ListTag}, int32_t);
-// // ListTag.prototype.getCompound = hacker.js("?getCompound@ListTag@@QEBAPEBVCompoundTag@@_K@Z", compoundTag, {this:ListTag}, int32_t);
-// ListTag.prototype.getDouble = hacker.js("?getDouble@ListTag@@QEBANH@Z", int32_t, {this:ListTag}, int32_t);
-// ListTag.prototype.getFloat = hacker.js("?getFloat@ListTag@@QEBAMH@Z", int32_t, {this:ListTag}, int32_t);
-// // // ListTag.prototype.getInt = hacker.js("?getInt@ListTag@@QEBAHH@Z", int32_t, {this:ListTag}, int32_t);
-// // ListTag.prototype.getStringValue = hacker.js("?getString@ListTag@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z", CxxString, {this:ListTag}, int32_t);
+ListTag.prototype.getCompound = hacker.js("?getCompound@ListTag@@QEBAPEBVCompoundTag@@_K@Z", compoundTag, {this:ListTag}, uint64_as_float_t);
+ListTag.prototype.size = hacker.js("?size@ListTag@@QEBAHXZ", int32_t, {this:ListTag});
+// ListTag.prototype.append = hacker.js("?add@ListTag@@QEAAXV?$unique_ptr@VTag@@U?$default_delete@VTag@@@std@@@std@@@Z", void_t, {this:ListTag}, Tag);
+// ListTag.prototype.copy = hacker.js("?copy@ListTag@@UEBA?AV?$unique_ptr@VTag@@U?$default_delete@VTag@@@std@@@std@@XZ", Tag, {this:ListTag});
+// ListTag.prototype.copyList = hacker.js("?copyList@ListTag@@QEBA?AV?$unique_ptr@VListTag@@U?$default_delete@VListTag@@@std@@@std@@XZ", ListTag, {this:ListTag});
+// ListTag.prototype.deleteChildren = hacker.js("?deleteChildren@ListTag@@UEAAXXZ", void_t, {this:ListTag});
+// ListTag.prototype.equals = hacker.js("?equals@ListTag@@UEBA_NAEBVTag@@@Z", bool_t, {this:ListTag}, Tag);
+ListTag.prototype.get = hacker.js("?get@ListTag@@QEBAPEAVTag@@H@Z", Tag, {this:ListTag}, int32_t);
+// ListTag.prototype.getCompound = hacker.js("?getCompound@ListTag@@QEBAPEBVCompoundTag@@_K@Z", compoundTag, {this:ListTag}, int32_t);
+ListTag.prototype.getDouble = hacker.js("?getDouble@ListTag@@QEBANH@Z", int32_t, {this:ListTag}, int32_t);
+ListTag.prototype.getFloat = hacker.js("?getFloat@ListTag@@QEBAMH@Z", int32_t, {this:ListTag}, int32_t);
+// // ListTag.prototype.getInt = hacker.js("?getInt@ListTag@@QEBAHH@Z", int32_t, {this:ListTag}, int32_t);
+// ListTag.prototype.getStringValue = hacker.js("?getString@ListTag@@QEBAAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@H@Z", CxxString, {this:ListTag}, int32_t);

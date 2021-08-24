@@ -1,11 +1,10 @@
 import { MinecraftPacketIds } from "bdsx/bds/packetids";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
-import { ServerSettingsResponsePacket, ShowModalFormPacket } from "bdsx/bds/packets";
+import { ModalFormRequestPacket, ServerSettingsResponsePacket, ShowModalFormPacket } from "bdsx/bds/packets";
 import { events } from "bdsx/event";
-import { NameById } from "./connection";
 
 export let FormData = new Map<NetworkIdentifier, {Id:number;func:(data:any)=>void}[]>();
-class formJSONTYPE {
+export class formJSONTYPE {
     type:"form"|"custom_form"|"modal";
     title:string;
     content:string|any[];
@@ -112,7 +111,7 @@ class ModalFile {
 */
 export function Formsend(target: NetworkIdentifier, form: formJSONTYPE|object, handler?: (data: any) => void, id?:number) {
     try {
-        const modalPacket = ShowModalFormPacket.create();
+        const modalPacket = ModalFormRequestPacket.create();
         let formId = Math.floor(Math.random() * 1147483647) + 1000000000;
         if (typeof id === "number") formId = id;
         modalPacket.setUint32(formId, 0x30);

@@ -7,7 +7,6 @@ import { CustomScore, ScoreTYPE } from './customScore';
 import { Disconnect } from './disconnect';
 import { bossBar } from './bossBar';
 import { netCmd } from './commandRequest';
-import { InventoryTransaction, transaction} from './inventoryTransaction';
 import { showProfile } from './ShowProfile';
 export {
     playerList,
@@ -25,8 +24,6 @@ export {
     Disconnect,
     bossBar,
     netCmd,
-    InventoryTransaction,
-    transaction,
     showProfile,
     DeviceById
 }

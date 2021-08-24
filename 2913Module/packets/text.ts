@@ -1,5 +1,6 @@
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { TextPacket } from "bdsx/bds/packets";
+import { serverInstance } from "../../../bdsx/bds/server";
 import { IdByName } from "./connection";
 
 /**
@@ -31,3 +32,11 @@ export function sendText(target: NetworkIdentifier|string, text: string, type?: 
     Packet.sendTo(networkIdentifier!, 0);
     Packet.dispose();
 }
+
+export function sendTextAll(text: string, type?: number){
+    const level = serverInstance.minecraft.getLevel();
+    if (level === undefined || level === null) return;
+    level.players.toArray().forEach((v)=>{
+        sendText(v.getNetworkIdentifier(), text, type);
+    });
+};

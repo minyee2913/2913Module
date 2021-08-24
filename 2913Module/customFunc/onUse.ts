@@ -1,10 +1,10 @@
-import { ItemStack } from "bdsx/bds/inventory";
+import { ComplexInventoryTransaction, InventorySource, ItemStack } from "bdsx/bds/inventory";
 import { NetworkIdentifier } from "bdsx/bds/networkidentifier";
 import { CANCEL } from "bdsx/common";
 import { events } from "bdsx/event";
 import { bedrockServer } from "bdsx/launcher";
 import { Event } from "bdsx/eventtarget";
-import { InventoryTransaction, transaction } from "../packets";
+import { MinecraftPacketIds } from "bdsx/bds/packetids";
 let system!:IVanillaServerSystem;
 events.serverOpen.on(()=>{
     system = server.registerSystem(0,0);
@@ -12,8 +12,9 @@ events.serverOpen.on(()=>{
 if (bedrockServer.isLaunched()) system = server.registerSystem(0,0);
 
 let timeout = new Map<NetworkIdentifier, NodeJS.Timeout>();
-InventoryTransaction.on((pkt, target, ev)=>{
-    if ((ev.action === transaction.ACTION_CLICKAIR_USE || ev.action === transaction.ACTION_CLICKBLOCK_PLACE) && (ev.type === transaction.TYPE_USE_ITEM || ev.type === transaction.TYPE_USE_ITEM_ON_ENTITY)) {
+
+events.packetBefore(MinecraftPacketIds.InventoryTransaction).on((pkt, target)=>{
+    if (pkt.transaction.type === ComplexInventoryTransaction.Type.ItemUseTransaction) {
         let actor = target.getActor();
         if (actor === null) return;
         let entity = actor.getEntity();
@@ -33,7 +34,7 @@ InventoryTransaction.on((pkt, target, ev)=>{
             }, 300));
             return onUseItem.fire(target, mainhand, itemStack);
         }
-    };
+    }
 });
 
 export const onUseItem = new Event<(target:NetworkIdentifier, itemName:string, itemStack:ItemStack) => void | CANCEL>();
